@@ -15,14 +15,15 @@ dev = [
 ]
 
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm>=8"]
-build-backend = "setuptools.build_meta"
+requires = ["maturin>=1.8,<2.0"]
+build-backend = "maturin"
 
-[tool.setuptools_scm]
-version_file = "src/mixedtape/_version.py"
-
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.maturin]
+# Mixed python/rust project: python sources live in src/mixedtape,
+# the rust extension builds to mixedtape._mixedtape.
+python-source = "src"
+module-name = "mixedtape._mixedtape"
+features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

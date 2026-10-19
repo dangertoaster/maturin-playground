@@ -6,11 +6,10 @@ __pycache__/
 dist/
 build/
 
-# setuptools_scm generated
-src/mixedtape/_version.py
-
 # rust
 target/
+Cargo.lock
+*.so
 
 # tooling
 .coverage

@@ -25,4 +25,4 @@ test-lsp:
 
 clean:
 	cargo clean
-	rm -rf dist build src/*.egg-info
+	rm -rf dist build *.egg-info

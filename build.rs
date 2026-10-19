@@ -8,8 +8,14 @@
 use std::process::Command;
 
 fn main() {
+    // Rebuild (and re-derive the version) when git state moves or when
+    // any source file in either language's tree changes. Without the
+    // `mixedtape/` entry, a python-only edit would leave a stale
+    // `.dirty`-less version baked into the cached extension.
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/refs/tags");
+    println!("cargo:rerun-if-changed=src");
+    println!("cargo:rerun-if-changed=mixedtape");
 
     let version = git_describe().unwrap_or_else(|| {
         let v = env!("CARGO_PKG_VERSION").to_string();

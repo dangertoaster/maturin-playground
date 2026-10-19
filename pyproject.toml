@@ -19,9 +19,10 @@ requires = ["maturin>=1.8,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-# Mixed python/rust project: python sources live in src/mixedtape,
-# the rust extension builds to mixedtape._mixedtape.
-python-source = "src"
+# Mixed python/rust project: python sources live in mixedtape/,
+# rust sources live in src/ (cargo's conventional location) and build
+# to the native module mixedtape._mixedtape.
+python-source = "."
 module-name = "mixedtape._mixedtape"
 features = ["pyo3/extension-module"]
 
@@ -30,5 +31,5 @@ testpaths = ["tests"]
 addopts = "-ra --strict-markers"
 
 [tool.coverage.run]
-source = ["src/mixedtape"]
+source = ["mixedtape"]
 branch = true

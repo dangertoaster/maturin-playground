@@ -9,10 +9,11 @@ library (`mixedtape`, with `grammar` and `platform` submodules).
 ```
 Cargo.toml                 # rust crate; version here drives the wheel version
 build.rs                   # derives MIXEDTAPE_VERSION from `git describe`
-src/lib.rs                 # #[pymodule] _mixedtape (crate root)
-src/grammar_rs.rs          # rust acceleration for mixedtape.grammar
-src/text.rs                # native text helpers (levenshtein, shingle)
-src/mixedtape/             # python package (maturin python-source)
+src/                       # rust sources (cargo's conventional location)
+  lib.rs                   # #[pymodule] _mixedtape (crate root)
+  grammar_rs.rs            # rust acceleration for mixedtape.grammar
+  text.rs                  # native text helpers (levenshtein, shingle)
+mixedtape/                 # python package
   __init__.py              # __version__ comes from the extension
   _mixedtape/__init__.pyi  # type stubs for the native module
   _mixedtape/grammar_rs.pyi
@@ -50,7 +51,7 @@ except ImportError:
   available implementation; the signatures and behaviour are identical.
 - **Maintainers** keep both implementations in tree: the Rust one in
   `src/grammar_rs.rs`, the Python reference in
-  `src/mixedtape/grammar/_arch.py`. Parity is enforced by
+  `mixedtape/grammar/_arch.py`. Parity is enforced by
   `tests/unit/grammar/test_impl_parity.py`, which runs the same cases
   against both.
 

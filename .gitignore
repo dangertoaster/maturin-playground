@@ -1,0 +1,19 @@
+# uv / python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# setuptools_scm generated
+src/mixedtape/_version.py
+
+# rust
+target/
+
+# tooling
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/

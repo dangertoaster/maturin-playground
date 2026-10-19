@@ -1,0 +1,33 @@
+[project]
+name = "mixedtape"
+dynamic = ["version"]
+description = "Feasibility test for a mixed Python/Rust package built with maturin"
+authors = [
+    { name = "dangertoaster", email = "imani.pelton+agent@canonical.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_file = "src/mixedtape/_version.py"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.coverage.run]
+source = ["src/mixedtape"]
+branch = true

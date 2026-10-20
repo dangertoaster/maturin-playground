@@ -11,9 +11,9 @@ use pyo3::prelude::*;
 ///
 /// Every public function here is signature- and behaviour-compatible with
 /// its pure-Python counterpart in :mod:`mixedtape.grammar`.
-#[pymodule]
+#[pymodule(submodule)]
 pub mod grammar_rs {
-    use super::*;
+    use pyo3::prelude::*;
 
     /// Parse a selector string into a ``(verb, arch)`` tuple.
     ///
@@ -27,7 +27,7 @@ pub mod grammar_rs {
     /// ('on', 'amd64')
     #[pyfunction]
     fn parse_selector(text: &str) -> Option<(String, String)> {
-        parse_selector_impl(text)
+        super::parse_selector_impl(text)
     }
 
     /// Return True if ``selector`` is a valid selector matching ``arch``.
@@ -38,9 +38,14 @@ pub mod grammar_rs {
     #[pyfunction]
     #[pyo3(signature = (selector, arch, *, verb = "on"))]
     fn matches(selector: &str, arch: &str, verb: &str) -> bool {
-        parse_selector_impl(selector)
+        super::parse_selector_impl(selector)
             .map(|(v, a)| v == verb && a == arch)
             .unwrap_or(false)
+    }
+
+    #[pymodule_init]
+    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
+        crate::util::register(m, "mixedtape._mixedtape.grammar_rs")
     }
 }
 

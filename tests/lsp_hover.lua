@@ -16,12 +16,16 @@ if ty == "" then
   ty = vim.fn.expand("~/.local/share/nvim/mason/bin/ty")
 end
 
--- (0-indexed line, 0-indexed col) positions of symbols in lsp_probe.py.
+-- (0-indexed line, 0-indexed col) positions of symbols in lsp_probe.py,
+-- targeting the import lines where symbol positions are unambiguous.
 local targets = {
-  { line = 2, col = 40, name = "levenshtein" },
-  { line = 2, col = 53, name = "shingle" },
-  { line = 3, col = 32, name = "parse_selector" },
-  { line = 3, col = 48, name = "matches" },
+  { line = 2, col = 35, name = "levenshtein" },
+  { line = 2, col = 50, name = "shingle" },
+  { line = 3, col = 30, name = "parse_selector" },
+  { line = 3, col = 47, name = "matches" },
+  { line = 4, col = 32, name = "sha256_data" },
+  { line = 5, col = 45, name = "ChunkedHasher (public deep import)" },
+  { line = 4, col = 47, name = "streaming (public submodule)" },
 }
 local results, done = {}, false
 

@@ -22,8 +22,8 @@ mixedtape/                 # python package
   grammar/                 # partially oxidized: rust fast path + py fallback
   platform/                # pure python
 tests/unit/                # pytest: unit + rust/python parity tests
-tests/integration/         # pytest: import-form conformance for the native tree
-tests/lsp_hover.lua        # headless neovim probe: do rust docstrings render?
+tests/integration/         # pytest: import-form conformance + LSP hover tests
+tests/lsp/                 # self-contained headless neovim config + hover probe
 ```
 
 ## Versioning
@@ -87,6 +87,17 @@ Two complementary suites, wired together in the `Makefile`:
   that exercise the compiled extension directly
   (`tests/unit/test_native_text.py`) and the parity tests above.
   Requires `make build` (`maturin develop`) first.
-- `make test-lsp`: optional smoke test that opens a probe file in
-  headless neovim with the `ty` language server and confirms docstrings
-  from the Rust extension (via its `.pyi` stubs) render on hover.
+- LSP hover smoke tests (`tests/integration/test_lsp_hover.py`, part of
+  the pytest run): spawn headless neovim with the self-contained config
+  in `tests/lsp/nvim/` and the `ty` language server from the project
+  venv (installed by `make setup`), and assert that docstrings from the
+  Rust extension (via its `.pyi` stubs) render on hover. Skip cleanly if
+  `nvim` (≥ 0.11) is not installed.
+
+## Getting started
+
+```
+make setup   # uv sync incl. dev tools (pytest, ty)
+make build   # maturin develop: compile the rust extension into .venv
+make test    # cargo test + pytest (incl. LSP hover tests)
+```

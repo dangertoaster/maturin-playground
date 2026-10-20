@@ -1,6 +1,7 @@
 .PHONY: setup build test test-python test-rust test-lsp clean
 
-#: Install python dev dependencies.
+#: Create the dev environment: python deps (including the `ty` language
+#: server used by the LSP hover tests) installed into .venv.
 setup:
 	uv sync --extra dev
 
@@ -8,10 +9,11 @@ setup:
 build:
 	maturin develop
 
-#: Run the full test suite (python + rust).
+#: Run the full test suite (python + rust; includes the LSP hover tests).
 test: test-python test-rust
 
-#: Python tests. Requires `make build` first.
+#: Python tests. Requires `make build` first. The LSP hover tests need
+#: `nvim` (>= 0.11) on PATH and skip cleanly without it.
 test-python:
 	uv run --no-sync pytest
 
@@ -19,9 +21,9 @@ test-python:
 test-rust:
 	cargo test
 
-#: Smoke-test that rust-symbol docstrings render in a python LSP.
+#: Just the LSP hover smoke tests.
 test-lsp:
-	nvim --headless -u NONE -l tests/lsp_hover.lua
+	uv run --no-sync pytest tests/integration/test_lsp_hover.py
 
 clean:
 	cargo clean

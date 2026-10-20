@@ -43,11 +43,6 @@ pub mod checksums {
         h.finish()
     }
 
-    #[pymodule_init]
-    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
-        crate::util::register(m, "mixedtape._mixedtape.checksums")
-    }
-
     /// Streaming hashers that accept data in chunks.
     #[pymodule]
     pub mod streaming {
@@ -89,11 +84,6 @@ pub mod checksums {
         #[pyfunction]
         fn digest(data: &[u8]) -> String {
             super::super::fnv1a_hex(data)
-        }
-
-        #[pymodule_init]
-        fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
-            crate::util::register(m, "mixedtape._mixedtape.checksums.streaming")
         }
     }
 }

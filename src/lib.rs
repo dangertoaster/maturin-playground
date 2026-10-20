@@ -43,7 +43,9 @@ mod _mixedtape {
 
     #[pymodule_init]
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
+        use crate::util::RegisterSubmodules as _;
+
         m.add("__version__", env!("MIXEDTAPE_VERSION"))?;
-        crate::util::register(m, "mixedtape._mixedtape")
+        m.register_submodules("mixedtape._mixedtape")
     }
 }

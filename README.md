@@ -60,16 +60,23 @@ except ImportError:
 
 ## Native module tree
 
-The extension (`mixedtape._mixedtape`) can be arbitrarily deep. Every
-rust `#[pymodule]` self-registers from its own `#[pymodule_init]` with a
-one-line call to `util::register(m, "<fully.qualified.python.name>")`,
-which handles the `sys.modules` insertion (working around
-[PyO3#759](https://github.com/PyO3/pyo3/issues/759)), sets `__package__`,
-and rewrites members' `__module__` to the dotted python path. Parents
-only name their children (`#[pymodule_export] use checksums::checksums;`)
-— never their contents — and nesting works bottom-up with no recursive
-glue. Classes additionally declare `#[pyclass(module = "...")]` so
-pickle/repr use the right name from birth.
+The extension (`mixedtape._mixedtape`) can be arbitrarily deep. The root
+pymodule's `#[pymodule_init]` makes a single call,
+`m.register_submodules("mixedtape._mixedtape")` (a `util` trait method on
+`Bound<PyModule>`), which walks the module tree recursively and, for every
+module, inserts it into `sys.modules` under its dotted name (working
+around [PyO3#759](https://github.com/PyO3/pyo3/issues/759)), sets
+`__name__` and `__package__`, and rewrites members' `__module__` to the
+dotted python path. Dotted names are computed from attribute names — the
+same source of truth the import system uses — so no per-module path
+strings exist to drift out of sync with the code.
+
+Adding a new rust submodule at any depth requires exactly two things:
+declare the `#[pymodule]`, and make it reachable from the root via
+`#[pymodule_export] use` in its parent. No registration code, no
+boilerplate. Classes additionally declare `#[pyclass(module = "...")]`
+so pickle/repr use the right name from birth (macro attributes can't
+call helpers, so this one literal remains).
 
 Oxidation is invisible to consumers: every import form that would work
 for a pure-python package works against the native tree, on both the

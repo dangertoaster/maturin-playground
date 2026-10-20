@@ -191,6 +191,21 @@ def test_sys_modules_registration(path):
     assert path in sys.modules
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "mixedtape._mixedtape",
+        "mixedtape._mixedtape.grammar_rs",
+        "mixedtape._mixedtape.checksums",
+        "mixedtape._mixedtape.checksums.streaming",
+    ],
+)
+def test_module_name_is_fully_qualified(path):
+    # PyO3 creates nested pymodules with the bare rust name ("streaming");
+    # registration must rewrite __name__ to the dotted path.
+    assert importlib.import_module(path).__name__ == path
+
+
 def test_import_forms_return_identical_module():
     import mixedtape._mixedtape.checksums.streaming as s1
     from mixedtape._mixedtape.checksums import streaming as s2

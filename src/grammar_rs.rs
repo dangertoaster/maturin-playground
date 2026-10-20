@@ -42,11 +42,6 @@ pub mod grammar_rs {
             .map(|(v, a)| v == verb && a == arch)
             .unwrap_or(false)
     }
-
-    #[pymodule_init]
-    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
-        crate::util::register(m, "mixedtape._mixedtape.grammar_rs")
-    }
 }
 
 /// Core selector parser, testable without a Python runtime.

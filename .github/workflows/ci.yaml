@@ -21,6 +21,9 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.10"
+          # parallel jobs would otherwise share one cache key and race
+          # to reserve it
+          cache-suffix: lint
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -45,6 +48,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.10"
+          cache-suffix: test
 
       - uses: dtolnay/rust-toolchain@stable
 

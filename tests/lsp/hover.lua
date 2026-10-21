@@ -24,6 +24,7 @@ local symbols = {
   "sha256_data",
   "streaming",
   "ChunkedHasher",
+  "similarity_ratio",
 }
 
 --- Find the (0-indexed line, 0-indexed col) of the first occurrence of

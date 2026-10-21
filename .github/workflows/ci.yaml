@@ -5,12 +5,32 @@ on:
     branches: [main]
   pull_request:
 
-# The token already has `workflow` scope; keep permissions minimal anyway.
 permissions:
   contents: read
 
+# Cancel superseded runs on the same ref; also serializes pushes so the
+# cache-warming deps job never races another instance of itself.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  # Single writer for the uv cache: parallel jobs with an identical
+  # lockfile hash would otherwise race to reserve the same key, which
+  # has been observed to wedge workflow runs in "in progress" forever
+  # even when every job passes. Downstream jobs only ever read the
+  # cache, which does not contend.
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.10"
+      - run: uv sync --extra dev
+
   lint:
+    needs: deps
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -21,9 +41,6 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.10"
-          # parallel jobs would otherwise share one cache key and race
-          # to reserve it
-          cache-suffix: lint
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -39,6 +56,7 @@ jobs:
         run: make lint
 
   test:
+    needs: deps
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -48,7 +66,6 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.10"
-          cache-suffix: test
 
       - uses: dtolnay/rust-toolchain@stable
 

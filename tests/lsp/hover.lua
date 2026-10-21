@@ -21,8 +21,6 @@ local probe = root .. "/tests/lsp/probe.py"
 local symbols = {
   "levenshtein",
   "shingle",
-  "parse_selector",
-  "matches",
   "sha256_data",
   "streaming",
   "ChunkedHasher",

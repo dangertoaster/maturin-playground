@@ -19,8 +19,8 @@
 use std::hint::black_box;
 
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
-use _mixedtape::grammar_rs::parse_selector_impl;
-use _mixedtape::text::{lev, shingle_words};
+use mixedtape::grammar_rs::parse_selector_impl;
+use mixedtape::text::{lev, shingle_words};
 
 fn bench_levenshtein(c: &mut Criterion) {
     let mut group = c.benchmark_group("levenshtein");

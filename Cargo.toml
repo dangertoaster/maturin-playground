@@ -7,7 +7,6 @@ description = "Feasibility test for a mixed Python/Rust package built with matur
 license = "GPL-3.0-only"
 
 [lib]
-name = "_mixedtape"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

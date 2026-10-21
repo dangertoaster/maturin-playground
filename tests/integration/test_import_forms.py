@@ -135,6 +135,13 @@ class TestPublicPaths:
         assert pub.ChunkedHasher is priv.ChunkedHasher
         assert pub.digest is priv.digest
 
+    def test_partially_oxidized_module(self):
+        # mixedtape.text mixes rust and python members under one path
+        from mixedtape import text
+
+        assert text.levenshtein("a", "b") == 1
+        assert text.similarity_ratio("abc", "abc") == text.MAX_RATIO
+
 
 @pytest.mark.parametrize(
     ("path", "member"),

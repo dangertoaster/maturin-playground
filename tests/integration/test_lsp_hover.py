@@ -114,6 +114,9 @@ class TestHoverDocs:
             pytest.param(
                 "ChunkedHasher", "accepts data incrementally", id="ChunkedHasher"
             ),
+            pytest.param(
+                "similarity_ratio", "0.0–1.0 ratio", id="similarity_ratio (python)"
+            ),
         ],
     )
     def test_symbol_hover_contains_docstring(

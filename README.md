@@ -18,6 +18,7 @@ mixedtape/                 # python package
   __init__.py              # __version__ comes from the extension
   _mixedtape/              # type stubs mirroring the rust module tree
   checksums/               # public package; streaming.py shims the rust module
+  text.py                  # partially oxidized: rust hot paths + python conveniences
 tests/unit/                # pytest: unit tests
 tests/integration/         # pytest: import-form conformance + LSP hover tests
 tests/lsp/                 # self-contained headless neovim config + hover probe
@@ -37,9 +38,28 @@ tests/lsp/                 # self-contained headless neovim config + hover probe
 
 ## Partial oxidation pattern
 
-(Being revised — the previous example was tied to a domain-specific
-module that has since been removed. See `mixedtape/checksums/` for the
-meanwhile-current shape of a rust-backed public module.)
+`mixedtape.text` is partially oxidized: its hot paths are Rust, the rest
+is still Python. The public module (`mixedtape/text.py`) imports the
+rust members from the extension and defines the remainder in place:
+
+```python
+from mixedtape._mixedtape import levenshtein, shingle  # rust
+
+MAX_RATIO = 1.0  # python
+
+
+def similarity_ratio(a: str, b: str) -> float:  # python, builds on rust
+    ...
+```
+
+- **Consumers** import everything from `mixedtape.text`; which language
+  implements a given member is invisible at the import site (and only
+  shows in introspection, e.g. `levenshtein.__module__`).
+- **Maintainers** oxidize one member at a time — the realistic shape for
+  gradually porting a large module — without moving anything in the
+  public namespace. Tests exercise the module through the public path
+  only (`tests/unit/test_text.py`), including a check that the
+  provenance split stays as expected.
 
 ## Native module tree
 

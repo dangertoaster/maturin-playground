@@ -7,7 +7,7 @@ setup:
 
 #: Build the rust extension in-place (editable install).
 build:
-	maturin develop
+	uv run --no-sync maturin develop
 
 #: Run the full test suite (python + rust; includes the LSP hover tests).
 test: test-python test-rust

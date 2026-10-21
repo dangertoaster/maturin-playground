@@ -1,8 +1,10 @@
 """Type stubs for the ``mixedtape._mixedtape`` native extension.
 
 This module is private; downstream consumers should import from
-``mixedtape`` or ``mixedtape.grammar`` instead.
+``mixedtape.text`` or ``mixedtape.checksums`` instead.
 """
+
+from collections.abc import Sequence
 
 __version__: str
 
@@ -22,6 +24,18 @@ def levenshtein(a: str, b: str) -> int:
     :param a: First string.
     :param b: Second string.
     :returns: The edit distance as a non-negative integer.
+    """
+
+def levenshtein_batch(pairs: Sequence[tuple[str, str]]) -> list[int]:
+    """Compute Levenshtein distances for many string pairs in parallel.
+
+    Pairs are processed on a rayon thread pool; the GIL is released for
+    the duration, so python threads (and other native calls) keep running
+    while this works. Pool size follows the ``RAYON_NUM_THREADS``
+    environment variable, defaulting to the number of CPUs.
+
+    :param pairs: A list of ``(a, b)`` string tuples.
+    :returns: Distances as a list of ints, in the same order as ``pairs``.
     """
 
 def shingle(text: str, n: int) -> list[str]:

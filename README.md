@@ -61,6 +61,25 @@ def similarity_ratio(a: str, b: str) -> float:  # python, builds on rust
   only (`tests/unit/test_text.py`), including a check that the
   provenance split stays as expected.
 
+## Parallelism
+
+CPU-bound batch work uses [rayon](https://docs.rs/rayon):
+`levenshtein_batch` parallelizes pairwise distances across a thread pool
+and releases the GIL for the duration (`py.detach`), so python threads
+stay live during native work. The pattern to copy when adding parallel
+entry points:
+
+1. Pure-rust core taking owned data (`lev_batch` in `src/text.rs`) —
+   testable with `cargo test`, benchmarkable, no pyo3 in the loop.
+2. A thin `#[pyfunction]` that extracts python values into owned rust
+   data, then `py.detach(|| core(...))`.
+3. Thread count follows `RAYON_NUM_THREADS`; no python-side knob.
+
+`tests/unit/test_text.py::TestLevenshteinBatch::test_releases_gil`
+proves the GIL handover (a small call on another thread must complete
+while a large one is running) and is mutation-checked: removing the
+`py.detach` makes it fail.
+
 ## Native module tree
 
 The extension (`mixedtape._mixedtape`) can be arbitrarily deep. The root

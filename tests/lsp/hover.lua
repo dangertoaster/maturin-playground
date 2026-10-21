@@ -25,6 +25,7 @@ local symbols = {
   "streaming",
   "ChunkedHasher",
   "similarity_ratio",
+  "levenshtein_batch",
 }
 
 --- Find the (0-indexed line, 0-indexed col) of the first occurrence of

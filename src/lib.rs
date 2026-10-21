@@ -23,6 +23,9 @@ mod mixedtape {
     use text::levenshtein;
 
     #[pymodule_export]
+    use text::levenshtein_batch;
+
+    #[pymodule_export]
     use text::shingle;
 
     #[pymodule_export]

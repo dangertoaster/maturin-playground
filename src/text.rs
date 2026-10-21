@@ -4,6 +4,7 @@
 //! their core; the PyO3 wrappers are thin.
 
 use pyo3::prelude::*;
+use rayon::prelude::*;
 use std::collections::HashSet;
 
 /// Compute the Levenshtein edit distance between two strings.
@@ -21,6 +22,26 @@ use std::collections::HashSet;
 #[pyfunction]
 pub fn levenshtein(a: &str, b: &str) -> usize {
     lev(a, b)
+}
+
+/// Compute Levenshtein distances for many string pairs in parallel.
+///
+/// Pairs are processed on a rayon thread pool; the GIL is released for
+/// the duration, so python threads (and other native calls) keep running
+/// while this works. Pool size follows the ``RAYON_NUM_THREADS``
+/// environment variable, defaulting to the number of CPUs.
+///
+/// :param pairs: A list of ``(a, b)`` string tuples.
+/// :returns: Distances as a list of ints, in the same order as ``pairs``.
+///
+/// >>> from mixedtape._mixedtape import levenshtein_batch
+/// >>> levenshtein_batch([("kitten", "sitting"), ("abc", "abc")])
+/// [3, 0]
+#[pyfunction]
+pub fn levenshtein_batch(py: Python<'_>, pairs: Vec<(String, String)>) -> Vec<usize> {
+    // Extract python data into owned rust values first (cheap), then
+    // release the GIL for the actual work.
+    py.detach(|| lev_batch(&pairs))
 }
 
 /// Split text into word ``n``-gram *shingles* for similarity comparison.
@@ -82,6 +103,17 @@ pub fn shingle_words(words: &[String], n: usize) -> HashSet<String> {
         .collect()
 }
 
+/// Pure-Rust core of [`levenshtein_batch`]: pairwise distances over a
+/// slice of string pairs, parallelized with rayon.
+///
+/// Public for benches/integration tests; not part of the python API.
+pub fn lev_batch(pairs: &[(String, String)]) -> Vec<usize> {
+    pairs
+        .par_iter()
+        .map(|(a, b)| lev(a, b))
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -129,5 +161,31 @@ mod tests {
     fn shingles_dedupe() {
         let got = shingle_words(&words("a b a b"), 2);
         assert_eq!(got.len(), 2);
+    }
+
+    fn pairs(items: &[(&str, &str)]) -> Vec<(String, String)> {
+        items
+            .iter()
+            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn lev_batch_matches_scalar() {
+        let p = pairs(&[("kitten", "sitting"), ("abc", "abc"), ("", "abc")]);
+        let expected: Vec<usize> = p.iter().map(|(a, b)| lev(a, b)).collect();
+        assert_eq!(lev_batch(&p), expected);
+    }
+
+    #[test]
+    fn lev_batch_empty() {
+        assert_eq!(lev_batch(&[]), Vec::<usize>::new());
+    }
+
+    #[test]
+    fn lev_batch_preserves_order() {
+        // parallelism must not reorder results
+        let p = pairs(&[("aaaa", "a"), ("a", "aaaa"), ("xy", "xy")]);
+        assert_eq!(lev_batch(&p), vec![3, 3, 0]);
     }
 }

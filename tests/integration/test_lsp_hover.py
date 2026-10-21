@@ -117,6 +117,11 @@ class TestHoverDocs:
             pytest.param(
                 "similarity_ratio", "0.0–1.0 ratio", id="similarity_ratio (python)"
             ),
+            pytest.param(
+                "levenshtein_batch",
+                "rayon thread pool",
+                id="levenshtein_batch (parallel rust)",
+            ),
         ],
     )
     def test_symbol_hover_contains_docstring(

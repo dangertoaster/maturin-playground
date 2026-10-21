@@ -19,7 +19,7 @@
 use std::hint::black_box;
 
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
-use mixedtape::text::{lev, shingle_words};
+use mixedtape::text::{lev, lev_batch, shingle_words};
 
 fn bench_levenshtein(c: &mut Criterion) {
     let mut group = c.benchmark_group("levenshtein");
@@ -49,5 +49,39 @@ fn bench_shingle(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, bench_levenshtein, bench_shingle);
+fn bench_levenshtein_batch(c: &mut Criterion) {
+    // Parallel batch vs the sequential loop it replaces. At small batch
+    // sizes parallel dispatch overhead can dominate; the parameter sweep
+    // shows where the crossover is.
+    let mut group = c.benchmark_group("levenshtein_batch");
+    for n in [16usize, 256, 4096] {
+        let pairs: Vec<(String, String)> = (0..n)
+            .map(|i| {
+                (
+                    format!("the quick brown fox {i}"),
+                    format!("the quik brwn fox {i}"),
+                )
+            })
+            .collect();
+        group.bench_with_input(BenchmarkId::new("par", n), &pairs, |bencher, pairs| {
+            bencher.iter(|| lev_batch(black_box(pairs)));
+        });
+        group.bench_with_input(BenchmarkId::new("seq", n), &pairs, |bencher, pairs| {
+            bencher.iter(|| {
+                pairs
+                    .iter()
+                    .map(|(a, b)| lev(black_box(a), black_box(b)))
+                    .collect::<Vec<_>>()
+            });
+        });
+    }
+    group.finish();
+}
+
+criterion_group!(
+    benches,
+    bench_levenshtein,
+    bench_levenshtein_batch,
+    bench_shingle
+);
 criterion_main!(benches);

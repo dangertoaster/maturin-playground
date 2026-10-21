@@ -1,4 +1,4 @@
-.PHONY: setup build test test-python test-rust test-lsp clean
+.PHONY: setup build test test-python test-rust test-lsp lint clean
 
 #: Create the dev environment: python deps (including the `ty` language
 #: server used by the LSP hover tests) installed into .venv.
@@ -24,6 +24,13 @@ test-rust:
 #: Just the LSP hover smoke tests.
 test-lsp:
 	uv run --no-sync pytest tests/integration/test_lsp_hover.py
+
+#: All static checks, same as CI: ruff (lint+format), ty (types), clippy.
+lint:
+	uv run --no-sync ruff check
+	uv run --no-sync ruff format --check
+	uv run --no-sync ty check
+	cargo clippy --all-targets -- --deny warnings
 
 clean:
 	cargo clean

@@ -101,6 +101,12 @@ Two complementary suites, wired together in the `Makefile`:
   Rust extension (via its `.pyi` stubs) render on hover. Skip cleanly if
   `nvim` (≥ 0.11) is not installed.
 
+## Linting
+
+`make lint` runs the same static checks as CI: `ruff check`, `ruff
+format --check`, `ty check`, and `clippy --all-targets -- -D warnings`.
+All with default configuration.
+
 ## Getting started
 
 ```

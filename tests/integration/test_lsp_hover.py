@@ -13,7 +13,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest
@@ -23,9 +22,7 @@ NVIM_CONFIG = ROOT / "tests" / "lsp" / "nvim" / "init.lua"
 HOVER_SCRIPT = ROOT / "tests" / "lsp" / "hover.lua"
 TY = ROOT / ".venv" / "bin" / "ty"
 
-nvim = pytest.mark.skipif(
-    shutil.which("nvim") is None, reason="nvim not installed"
-)
+nvim = pytest.mark.skipif(shutil.which("nvim") is None, reason="nvim not installed")
 ty = pytest.mark.skipif(not TY.exists(), reason="ty not installed; run `make setup`")
 
 
@@ -56,6 +53,7 @@ def _run_hover() -> dict[str, str]:
             "-l",
             str(HOVER_SCRIPT),
         ],
+        check=False,
         capture_output=True,
         text=True,
         env=env,
@@ -109,13 +107,17 @@ class TestHoverDocs:
     @pytest.mark.parametrize(
         ("symbol", "expected"),
         [
-            ("levenshtein", "Levenshtein edit distance"),
-            ("shingle", "shingles"),
-            ("parse_selector", "selector string into a"),
-            ("matches", "valid selector matching"),
-            ("sha256_data", "digest of a byte string"),
-            ("streaming", "checksums.streaming"),
-            ("ChunkedHasher (public deep import)", "accepts data incrementally"),
+            pytest.param("levenshtein", "Levenshtein edit distance", id="levenshtein"),
+            pytest.param("shingle", "shingles", id="shingle"),
+            pytest.param(
+                "parse_selector", "selector string into a", id="parse_selector"
+            ),
+            pytest.param("matches", "valid selector matching", id="matches"),
+            pytest.param("sha256_data", "digest of a byte string", id="sha256_data"),
+            pytest.param("streaming", "checksums.streaming", id="streaming"),
+            pytest.param(
+                "ChunkedHasher", "accepts data incrementally", id="ChunkedHasher"
+            ),
         ],
     )
     def test_symbol_hover_contains_docstring(

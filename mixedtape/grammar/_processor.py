@@ -7,14 +7,15 @@ grammar statements.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Any, Callable, Iterable, Union
+from typing import Any
 
 #: A grammar value is either a scalar, a list of grammar values, or a
 #: dict mapping selectors to grammar values.
-GrammarValue = Union[str, int, float, bool, None, list, dict]
+GrammarValue = str | int | float | bool | None | list | dict
 
-ScalarProcessor = Callable[[Union[str, int, float, bool, None]], Any]
+ScalarProcessor = Callable[[str | int | float | bool | None], Any]
 
 
 @dataclass(frozen=True)

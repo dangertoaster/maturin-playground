@@ -15,17 +15,32 @@
 local root = vim.env.MIXEDTAPE_ROOT or vim.fn.getcwd()
 local probe = root .. "/tests/lsp/probe.py"
 
--- (0-indexed line, 0-indexed col) positions of symbols in probe.py,
--- targeting the import lines where symbol positions are unambiguous.
-local targets = {
-  { line = 2, col = 35, name = "levenshtein" },
-  { line = 2, col = 50, name = "shingle" },
-  { line = 3, col = 30, name = "parse_selector" },
-  { line = 3, col = 47, name = "matches" },
-  { line = 4, col = 32, name = "sha256_data" },
-  { line = 4, col = 47, name = "streaming" },
-  { line = 5, col = 45, name = "ChunkedHasher (public deep import)" },
+-- Symbols to hover, found by searching probe.py for their first
+-- occurrence so that import reformatting (isort etc.) never silently
+-- invalidates the probe positions.
+local symbols = {
+  "levenshtein",
+  "shingle",
+  "parse_selector",
+  "matches",
+  "sha256_data",
+  "streaming",
+  "ChunkedHasher",
 }
+
+--- Find the (0-indexed line, 0-indexed col) of the first occurrence of
+--- `symbol` in the probe file's import block.
+local function find_symbol(symbol)
+  local lines = vim.fn.readfile(probe)
+  for i, line in ipairs(lines) do
+    local col = line:find(symbol, 1, true)
+    if col then
+      return i - 1, col - 1
+    end
+  end
+  return nil, nil
+end
+
 local results, done = {}, false
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -35,20 +50,25 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return
     end
     local function hover(i)
-      if i > #targets then
+      if i > #symbols then
         done = true
         return
       end
-      local t = targets[i]
+      local name = symbols[i]
+      local line, col = find_symbol(name)
+      if not line then
+        results[name] = nil
+        return hover(i + 1)
+      end
       client:request("textDocument/hover", {
         textDocument = { uri = vim.uri_from_fname(probe) },
-        position = { line = t.line, character = t.col },
+        position = { line = line, character = col },
       }, function(err, res)
         if err or not res or not res.contents then
-          results[t.name] = nil
+          results[name] = nil
         else
           local c = res.contents
-          results[t.name] = type(c) == "table" and (c.value or vim.inspect(c)) or tostring(c)
+          results[name] = type(c) == "table" and (c.value or vim.inspect(c)) or tostring(c)
         end
         hover(i + 1)
       end, ev.buf)
@@ -70,10 +90,10 @@ while not done and vim.uv.now() < deadline do
 end
 
 local failures = 0
-for _, t in ipairs(targets) do
-  print("=== " .. t.name)
-  if results[t.name] then
-    print(results[t.name])
+for _, name in ipairs(symbols) do
+  print("=== " .. name)
+  if results[name] then
+    print(results[name])
   else
     failures = failures + 1
     print("<no hover>")

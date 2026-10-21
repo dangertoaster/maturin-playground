@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum
-from typing import Iterable
 
 
 class Arch(str, Enum):
@@ -16,7 +16,7 @@ class Arch(str, Enum):
     S390X = "s390x"
 
     @classmethod
-    def from_deb(cls, deb_arch: str) -> "Arch":
+    def from_deb(cls, deb_arch: str) -> Arch:
         """Look up an :class:`Arch` by its Debian architecture name.
 
         :param deb_arch: e.g. ``"amd64"``.

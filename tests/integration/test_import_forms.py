@@ -92,7 +92,9 @@ class TestStreamingSubmodule:
         # `import x.y.z.w` must bind `x` in the local namespace
         import mixedtape._mixedtape.checksums.streaming
 
-        assert mixedtape._mixedtape.checksums.streaming.digest(b"a") == "af63dc4c8601ec8c"
+        assert (
+            mixedtape._mixedtape.checksums.streaming.digest(b"a") == "af63dc4c8601ec8c"
+        )
 
     def test_deep_first_import_in_fresh_interpreter(self):
         # The hardest case: the deepest module is imported before anything
@@ -104,11 +106,14 @@ class TestStreamingSubmodule:
             [
                 sys.executable,
                 "-c",
-                "import mixedtape._mixedtape.checksums.streaming as s; "
-                "assert s.digest(b'a') == 'af63dc4c8601ec8c'; "
-                "import mixedtape._mixedtape.checksums as c; "
-                "assert c.streaming is s",
+                (
+                    "import mixedtape._mixedtape.checksums.streaming as s; "
+                    "assert s.digest(b'a') == 'af63dc4c8601ec8c'; "
+                    "import mixedtape._mixedtape.checksums as c; "
+                    "assert c.streaming is s"
+                ),
             ],
+            check=False,
             capture_output=True,
             text=True,
         )

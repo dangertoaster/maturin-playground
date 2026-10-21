@@ -14,7 +14,6 @@ def sha256_data(data: bytes) -> str:
     :param data: The bytes to hash.
     :returns: Lowercase hex digest.
     """
-    ...
 
 def xxh3_data(data: bytes) -> int:
     """Compute a 64-bit XXH3-style hash of a byte string.
@@ -25,4 +24,3 @@ def xxh3_data(data: bytes) -> int:
     :param data: The bytes to hash.
     :returns: The hash as an unsigned 64-bit integer.
     """
-    ...

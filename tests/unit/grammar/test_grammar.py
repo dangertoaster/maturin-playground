@@ -15,7 +15,9 @@ class TestParseSelector:
     def test_valid(self, text, expected):
         assert parse_selector(text) == expected
 
-    @pytest.mark.parametrize("text", ["", "on", "amd64", "from amd64", "on AMD64", "on amd64 extra"])
+    @pytest.mark.parametrize(
+        "text", ["", "on", "amd64", "from amd64", "on AMD64", "on amd64 extra"]
+    )
     def test_invalid(self, text):
         assert parse_selector(text) is None
 
@@ -33,19 +35,25 @@ class TestMatches:
 
 
 class TestWalk:
+    @staticmethod
+    def _upper(value: str | float | bool | None) -> str:
+        # walk() declares a scalar -> Any processor; a plain function keeps
+        # the type checker happy where str.upper's overloads confuse it.
+        return str(value).upper()
+
     def test_scalar(self):
-        assert walk("x", str.upper) == ["X"]
+        assert walk("x", self._upper) == ["X"]
 
     def test_list(self):
-        assert walk(["a", "b"], str.upper) == ["A", "B"]
+        assert walk(["a", "b"], self._upper) == ["A", "B"]
 
     def test_nested(self):
         value = {"on amd64": ["a", {"to arm64": ["b"]}], "else": "c"}
-        assert walk(value, str.upper) == ["A", "B", "C"]
+        assert walk(value, self._upper) == ["A", "B", "C"]
 
     def test_empty_containers(self):
-        assert walk([], str.upper) == []
-        assert walk({}, str.upper) == []
+        assert walk([], self._upper) == []
+        assert walk({}, self._upper) == []
 
 
 class TestStatements:

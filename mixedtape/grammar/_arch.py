@@ -7,12 +7,11 @@ conditionals found in project files.
 from __future__ import annotations
 
 import re
-from typing import Optional
 
 _SELECTOR_RE = re.compile(r"^(on|to)\s+([a-z0-9_-]+)$")
 
 
-def parse_selector(text: str) -> Optional[tuple[str, str]]:
+def parse_selector(text: str) -> tuple[str, str] | None:
     """Parse a selector string into a (verb, arch) tuple.
 
     :param text: e.g. ``"on amd64"`` or ``"to riscv64"``.

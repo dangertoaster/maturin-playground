@@ -12,7 +12,6 @@ def version() -> str:
     :returns: PEP 440 version string, e.g. ``"0.2.0"`` or
         ``"0.2.0.dev3+gdeadbee"`` between tags.
     """
-    ...
 
 def levenshtein(a: str, b: str) -> int:
     """Compute the Levenshtein edit distance between two strings.
@@ -24,7 +23,6 @@ def levenshtein(a: str, b: str) -> int:
     :param b: Second string.
     :returns: The edit distance as a non-negative integer.
     """
-    ...
 
 def shingle(text: str, n: int) -> list[str]:
     """Split text into word ``n``-gram *shingles* for similarity comparison.
@@ -37,4 +35,3 @@ def shingle(text: str, n: int) -> list[str]:
     :returns: Sorted list of unique shingles.
     :raises ValueError: if ``n`` is 0.
     """
-    ...

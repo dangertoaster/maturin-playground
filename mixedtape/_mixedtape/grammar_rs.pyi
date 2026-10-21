@@ -10,7 +10,6 @@ def parse_selector(text: str) -> tuple[str, str] | None:
     :param text: e.g. ``"on amd64"`` or ``"to riscv64"``.
     :returns: ``("on", "amd64")`` etc., or ``None`` if malformed.
     """
-    ...
 
 def matches(selector: str, arch: str, *, verb: str = "on") -> bool:
     """Return True if ``selector`` is a valid selector matching ``arch``.
@@ -19,4 +18,3 @@ def matches(selector: str, arch: str, *, verb: str = "on") -> bool:
     :param arch: The architecture to test against.
     :param verb: Which selector verb to require (default ``"on"``).
     """
-    ...

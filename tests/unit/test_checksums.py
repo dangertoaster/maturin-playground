@@ -44,4 +44,5 @@ class TestStreaming:
 
     def test_update_rejects_str(self):
         with pytest.raises(TypeError):
-            ChunkedHasher().update("not bytes")
+            # intentionally wrong type: asserts the rust binding validates
+            ChunkedHasher().update("not bytes")  # ty: ignore[invalid-argument-type]

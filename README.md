@@ -1,8 +1,8 @@
 # maturin-playground
 
 Feasibility test for a mixed Python/Rust package built with
-[maturin](https://www.maturin.rs/), in the shape of a small craft-style
-library (`mixedtape`, with `grammar` and `platform` submodules).
+[maturin](https://www.maturin.rs/), in the shape of a small library of
+string and hashing helpers.
 
 ## Layout
 
@@ -12,16 +12,13 @@ build.rs                   # derives MIXEDTAPE_VERSION from `git describe`
 src/                       # rust sources (cargo's conventional location)
   lib.rs                   # #[pymodule] _mixedtape (crate root)
   util.rs                  # register(): shared submodule registration helper
-  grammar_rs.rs            # rust acceleration for mixedtape.grammar
   checksums.rs             # checksums module + nested streaming submodule
   text.rs                  # native text helpers (levenshtein, shingle)
 mixedtape/                 # python package
   __init__.py              # __version__ comes from the extension
   _mixedtape/              # type stubs mirroring the rust module tree
   checksums/               # public package; streaming.py shims the rust module
-  grammar/                 # partially oxidized: rust fast path + py fallback
-  platform/                # pure python
-tests/unit/                # pytest: unit + rust/python parity tests
+tests/unit/                # pytest: unit tests
 tests/integration/         # pytest: import-form conformance + LSP hover tests
 tests/lsp/                 # self-contained headless neovim config + hover probe
 ```
@@ -40,23 +37,9 @@ tests/lsp/                 # self-contained headless neovim config + hover probe
 
 ## Partial oxidation pattern
 
-`mixedtape.grammar` is partially oxidized. The public package
-(`grammar/__init__.py`) does:
-
-```python
-try:
-    from mixedtape._mixedtape.grammar_rs import matches, parse_selector  # rust
-except ImportError:
-    from mixedtape.grammar._arch import matches, parse_selector  # python
-```
-
-- **Consumers** import from `mixedtape.grammar` and get the fastest
-  available implementation; the signatures and behaviour are identical.
-- **Maintainers** keep both implementations in tree: the Rust one in
-  `src/grammar_rs.rs`, the Python reference in
-  `mixedtape/grammar/_arch.py`. Parity is enforced by
-  `tests/unit/grammar/test_impl_parity.py`, which runs the same cases
-  against both.
+(Being revised — the previous example was tied to a domain-specific
+module that has since been removed. See `mixedtape/checksums/` for the
+meanwhile-current shape of a rust-backed public module.)
 
 ## Native module tree
 

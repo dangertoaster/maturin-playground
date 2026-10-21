@@ -30,23 +30,9 @@ class TestExtensionRoot:
         assert isinstance(version(), str)
 
     def test_from_import_submodules(self):
-        from mixedtape._mixedtape import checksums, grammar_rs
+        from mixedtape._mixedtape import checksums
 
-        assert grammar_rs.parse_selector("on amd64") == ("on", "amd64")
         assert checksums.sha256_data(b"a") == "af63dc4c8601ec8c"
-
-
-class TestGrammarRsSubmodule:
-    def test_dotted_import(self):
-        import mixedtape._mixedtape.grammar_rs as g
-
-        assert g.matches("on arm64", "arm64")
-
-    def test_from_import(self):
-        from mixedtape._mixedtape.grammar_rs import matches, parse_selector
-
-        assert parse_selector("bogus") is None
-        assert matches("to riscv64", "riscv64", verb="to")
 
 
 class TestChecksumsSubmodule:
@@ -154,7 +140,6 @@ class TestPublicPaths:
     ("path", "member"),
     [
         ("mixedtape._mixedtape", "levenshtein"),
-        ("mixedtape._mixedtape.grammar_rs", "parse_selector"),
         ("mixedtape._mixedtape.checksums", "sha256_data"),
         ("mixedtape._mixedtape.checksums.streaming", "digest"),
         ("mixedtape._mixedtape.checksums.streaming", "ChunkedHasher"),
@@ -169,7 +154,6 @@ def test_module_attribute_is_fully_qualified(path, member):
     ("path", "expected_package"),
     [
         ("mixedtape._mixedtape", "mixedtape"),
-        ("mixedtape._mixedtape.grammar_rs", "mixedtape._mixedtape"),
         ("mixedtape._mixedtape.checksums", "mixedtape._mixedtape"),
         (
             "mixedtape._mixedtape.checksums.streaming",
@@ -185,7 +169,6 @@ def test_package_attribute(path, expected_package):
     "path",
     [
         "mixedtape._mixedtape",
-        "mixedtape._mixedtape.grammar_rs",
         "mixedtape._mixedtape.checksums",
         "mixedtape._mixedtape.checksums.streaming",
     ],
@@ -200,7 +183,6 @@ def test_sys_modules_registration(path):
     "path",
     [
         "mixedtape._mixedtape",
-        "mixedtape._mixedtape.grammar_rs",
         "mixedtape._mixedtape.checksums",
         "mixedtape._mixedtape.checksums.streaming",
     ],
@@ -221,8 +203,7 @@ def test_import_forms_return_identical_module():
 
 def test_public_api_unchanged():
     import mixedtape
-    from mixedtape.grammar import matches, parse_selector
+    from mixedtape._mixedtape import levenshtein
 
     assert isinstance(mixedtape.__version__, str)
-    assert parse_selector("on amd64") == ("on", "amd64")
-    assert matches("on arm64", "arm64")
+    assert levenshtein("kitten", "sitting") == 3

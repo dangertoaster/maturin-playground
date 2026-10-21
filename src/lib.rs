@@ -8,7 +8,6 @@
 use pyo3::prelude::*;
 
 pub mod checksums;
-pub mod grammar_rs;
 pub mod text;
 mod util;
 
@@ -25,9 +24,6 @@ mod mixedtape {
 
     #[pymodule_export]
     use text::shingle;
-
-    #[pymodule_export]
-    use grammar_rs::grammar_rs;
 
     #[pymodule_export]
     use checksums::checksums;

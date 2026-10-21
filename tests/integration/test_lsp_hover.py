@@ -109,10 +109,6 @@ class TestHoverDocs:
         [
             pytest.param("levenshtein", "Levenshtein edit distance", id="levenshtein"),
             pytest.param("shingle", "shingles", id="shingle"),
-            pytest.param(
-                "parse_selector", "selector string into a", id="parse_selector"
-            ),
-            pytest.param("matches", "valid selector matching", id="matches"),
             pytest.param("sha256_data", "digest of a byte string", id="sha256_data"),
             pytest.param("streaming", "checksums.streaming", id="streaming"),
             pytest.param(

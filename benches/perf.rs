@@ -19,7 +19,6 @@
 use std::hint::black_box;
 
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
-use mixedtape::grammar_rs::parse_selector_impl;
 use mixedtape::text::{lev, shingle_words};
 
 fn bench_levenshtein(c: &mut Criterion) {
@@ -50,15 +49,5 @@ fn bench_shingle(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_parse_selector(c: &mut Criterion) {
-    let mut group = c.benchmark_group("parse_selector");
-    for input in ["on amd64", "to riscv64", "bogus input here"] {
-        group.bench_with_input(BenchmarkId::from_parameter(input), &input, |bencher, input| {
-            bencher.iter(|| parse_selector_impl(black_box(input)));
-        });
-    }
-    group.finish();
-}
-
-criterion_group!(benches, bench_levenshtein, bench_shingle, bench_parse_selector);
+criterion_group!(benches, bench_levenshtein, bench_shingle);
 criterion_main!(benches);

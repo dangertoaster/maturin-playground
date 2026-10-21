@@ -101,6 +101,25 @@ Two complementary suites, wired together in the `Makefile`:
   Rust extension (via its `.pyi` stubs) render on hover. Skip cleanly if
   `nvim` (≥ 0.11) is not installed.
 
+## Benchmarks
+
+Performance regression benchmarks live in
+[`benches/perf.rs`](benches/perf.rs), using
+[criterion](https://benches.rs) (the standard rust benchmarking harness).
+That file is the reference for how to write new ones — group related
+benchmarks, parameterize by input size with `BenchmarkId`, and register
+in the `criterion_group!` at the bottom.
+
+```
+make bench                                # run all benchmarks
+cargo bench -- --save-baseline main       # snapshot before a change
+cargo bench -- --baseline main            # compare after
+```
+
+CI smoke-runs the benchmarks (`cargo bench -- --test`) so they can't
+silently stop compiling; real regression comparisons are a local/PR
+workflow via baselines.
+
 ## Linting
 
 `make lint` runs the same static checks as CI: `ruff check`, `ruff

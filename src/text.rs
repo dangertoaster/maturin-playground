@@ -51,7 +51,9 @@ pub fn shingle(text: &str, n: usize) -> PyResult<Vec<String>> {
 }
 
 /// Pure-Rust core of [`levenshtein`], testable without a Python runtime.
-pub(crate) fn lev(a: &str, b: &str) -> usize {
+///
+/// Public for benches/integration tests; not part of the python API.
+pub fn lev(a: &str, b: &str) -> usize {
     let b_chars: Vec<char> = b.chars().collect();
     let mut prev: Vec<usize> = (0..=b_chars.len()).collect();
     let mut curr = vec![0usize; b_chars.len() + 1];
@@ -68,7 +70,9 @@ pub(crate) fn lev(a: &str, b: &str) -> usize {
 }
 
 /// Pure-Rust core of [`shingle`], testable without a Python runtime.
-pub(crate) fn shingle_words(words: &[String], n: usize) -> HashSet<String> {
+///
+/// Public for benches/integration tests; not part of the python API.
+pub fn shingle_words(words: &[String], n: usize) -> HashSet<String> {
     if words.len() < n {
         return HashSet::new();
     }

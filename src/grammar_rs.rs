@@ -45,7 +45,9 @@ pub mod grammar_rs {
 }
 
 /// Core selector parser, testable without a Python runtime.
-pub(crate) fn parse_selector_impl(text: &str) -> Option<(String, String)> {
+///
+/// Public for benches/integration tests; not part of the python API.
+pub fn parse_selector_impl(text: &str) -> Option<(String, String)> {
     let mut parts = text.split_whitespace();
     let verb = parts.next()?;
     let arch = parts.next()?;

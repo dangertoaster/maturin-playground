@@ -7,17 +7,17 @@
 
 use pyo3::prelude::*;
 
-mod checksums;
-mod grammar_rs;
-mod text;
+pub mod checksums;
+pub mod grammar_rs;
+pub mod text;
 mod util;
 
 /// The mixedtape native extension.
 ///
 /// This module is private; import from ``mixedtape`` or one of its
 /// subpackages instead of using it directly.
-#[pymodule]
-mod _mixedtape {
+#[pymodule(name = "_mixedtape")]
+mod mixedtape {
     use super::*;
 
     #[pymodule_export]

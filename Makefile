@@ -32,6 +32,12 @@ lint:
 	uv run --no-sync ty check
 	cargo clippy --all-targets -- --deny warnings
 
+#: Run the criterion benchmarks (benches/perf.rs). Use
+#: `cargo bench -- --save-baseline main` / `--baseline main` to compare
+#: a change against main.
+bench:
+	cargo bench
+
 clean:
 	cargo clean
 	rm -rf dist build *.egg-info

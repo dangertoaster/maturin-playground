@@ -56,3 +56,8 @@ jobs:
 
       - name: Test
         run: make test
+
+      # Smoke-run the benchmarks so they can't silently stop compiling or
+      # panic; real perf comparisons happen locally via `make bench`.
+      - name: Bench (smoke)
+        run: cargo bench -- --test

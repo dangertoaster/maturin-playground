@@ -82,3 +82,23 @@ jobs:
       # panic; real perf comparisons happen locally via `make bench`.
       - name: Bench (smoke)
         run: cargo bench -- --test
+
+  docs:
+    needs: deps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.10"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build docs
+        run: make docs-build
+
+      - name: Lint docs
+        run: make docs-lint

@@ -1,0 +1,23 @@
+# Canonical theme (still needed for Furo theme and custom templates)
+canonical-sphinx~=0.6
+
+# Extensions previously auto-loaded by canonical-sphinx
+myst-parser~=4.0
+sphinx-autobuild
+sphinx-design==0.6.1
+sphinx-notfound-page~=1.1
+sphinx-rerediraffe>=0.0.3, <1.0.0
+sphinxcontrib-jquery~=4.1
+sphinxext-opengraph~=0.13
+
+# Extra extensions, previously bundled as canonical-sphinx-extensions
+sphinx-related-links~=0.1
+sphinx-roles~=0.1
+sphinx-terminal~=1.0
+
+# Other dependencies
+sphinx-sitemap~=2.9
+sphinx-llm~=0.4
+
+# Autodoc of Python *and* Rust-backed (pyo3) members
+sphinx-autodoc-typehints

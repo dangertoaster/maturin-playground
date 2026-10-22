@@ -18,6 +18,26 @@ dev = [
     "ty>=0.0.88",
 ]
 
+# Sphinx documentation toolchain, mirrored in docs/requirements.txt for
+# Read the Docs (RTD consumes requirements files, not uv lockfiles).
+docs = [
+    "canonical-sphinx~=0.6",
+    "myst-parser~=4.0",
+    "sphinx-autobuild>=2024.10.3",
+    "sphinx-autodoc-typehints",
+    "sphinx-design==0.6.1",
+    "sphinx-lint~=1.0",
+    "sphinx-llm~=0.4",
+    "sphinx-notfound-page~=1.1",
+    "sphinx-related-links~=0.1",
+    "sphinx-rerediraffe>=0.0.3,<1.0.0",
+    "sphinx-roles~=0.1",
+    "sphinx-sitemap~=2.9",
+    "sphinx-terminal~=1.0",
+    "sphinxcontrib-jquery~=4.1",
+    "sphinxext-opengraph~=0.13",
+]
+
 [build-system]
 requires = ["maturin>=1.8,<2.0"]
 build-backend = "maturin"

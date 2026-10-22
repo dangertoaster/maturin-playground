@@ -22,6 +22,7 @@ mixedtape/                 # python package
 tests/unit/                # pytest: unit tests
 tests/integration/         # pytest: import-form conformance + LSP hover tests
 tests/lsp/                 # self-contained headless neovim config + hover probe
+docs/                      # sphinx docs (canonical-sphinx theme); `make docs-build`
 ```
 
 ## Versioning
@@ -141,6 +142,26 @@ cargo bench -- --baseline main            # compare after
 CI smoke-runs the benchmarks (`cargo bench -- --test`) so they can't
 silently stop compiling; real regression comparisons are a local/PR
 workflow via baselines.
+
+## Documentation
+
+Sphinx docs live in `docs/`, built the RTD way (sphinx +
+[canonical-sphinx](https://github.com/canonical/canonical-sphinx),
+starbase-style scaffold). The point of interest here: autodoc documents
+the **Rust** functions too — pyo3 turns `///` rustdoc comments into
+runtime `__doc__` strings on the compiled module, so the oxidized
+members render with signatures, `:param:` fields and doctests straight
+from `src/*.rs`, no stubs or duplication. See for yourself:
+
+```
+make docs-build
+open docs/_build/index.html   # reference/text: levenshtein et al. are Rust
+```
+
+Deps come from the `docs` extra in `pyproject.toml`
+(`docs/requirements.txt` mirrors it for a future RTD project). Also
+available: `make docs-auto` (live reload), `make docs-lint`,
+`make docs-clean`.
 
 ## Linting
 

@@ -4,10 +4,11 @@ export DOCS_BUILDDIR ?= _build
 
 .PHONY: setup build test test-python test-rust test-lsp lint clean docs-setup docs-build docs-auto docs-clean docs-lint
 
-#: Create the dev environment: python deps (including the `ty` language
-#: server used by the LSP hover tests) installed into .venv.
+#: Create the full dev environment: python deps (including the `ty`
+#: language server used by the LSP hover tests) plus the sphinx docs
+#: toolchain, installed into .venv.
 setup:
-	uv sync --extra dev
+	uv sync --extra dev --extra docs
 
 #: Build the rust extension in-place (editable install).
 build:
@@ -51,14 +52,12 @@ docs-setup:
 #: built (`make build`) so autodoc can import the package and read the
 #: pyo3 docstrings out of the native module. Open docs/_build/index.html
 #: afterwards.
-docs-build:
-	$(MAKE) docs-setup
+docs-build: docs-setup
 	$(MAKE) build
 	DOCS_VENVDIR="$(abspath .venv)" $(MAKE) -C docs html --no-print-directory
 
 #: Build and serve the docs with live reload.
-docs-auto:
-	$(MAKE) docs-setup
+docs-auto: docs-setup
 	$(MAKE) build
 	DOCS_VENVDIR="$(abspath .venv)" $(MAKE) -C docs run --no-print-directory
 
@@ -68,8 +67,7 @@ docs-clean:
 
 #: Lint the docs sources (rst style rules: trailing backslashes, bad
 #: hyperlinks, etc.). Distinct from `docs-build`'s sphinx build warnings.
-docs-lint:
-	$(MAKE) docs-setup
+docs-lint: docs-setup
 	uv run --no-sync --extra dev --extra docs sphinx-lint docs \
 		--ignore docs/_dev --ignore docs/_build --enable all
 

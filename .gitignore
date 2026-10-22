@@ -16,3 +16,7 @@ Cargo.lock
 htmlcov/
 .pytest_cache/
 .ruff_cache/
+
+# docs
+docs/_build/
+docs/_dev/
